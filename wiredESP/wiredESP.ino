@@ -7,6 +7,9 @@
 // Debounce Object
 Bounce trigger = Bounce();
 
+// Delay time
+unsigned long myTime;
+
 void setup() {
   // Initialize Serial Comms
   Serial.begin(115200);
@@ -19,7 +22,9 @@ void setup() {
 void loop() {
   // Computer Vision Detected a Bullet Fired 
   //while (!Serial.available());
-  if (Serial.readString() == "Detected"){
+  String response = Serial.readString();
+  response.trim();
+  if (response == "D"){
     fire();
   }
 
@@ -27,12 +32,13 @@ void loop() {
   trigger.update();
 
   if(trigger.fell()){
+    myTime = millis();
     // Send trigger event to the PC
-    Serial.print("Trigger");
+    Serial.print("T");
   }
 }
 
 // Computer Vision Detected a Bullet Firing, Fire the Bullet
 void fire(){
-  Serial.print("Firing");
+  Serial.print("F");
 }
