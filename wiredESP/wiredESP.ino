@@ -1,22 +1,29 @@
 #include <Arduino.h>
+#include <Bounce2.h>
 
-// Pin Status
-bool trigger = false;
+// Define Buttons
+#define TRIGGER_PIN 18
 
-// Debounce Timer
-unsigned long debounceTimer = 0;
+// Debounce Object
+Bounce trigger = Bounce();
 
-// Debounce Delay Time
-unsigned int delayTime = 150;
+// // Pin Status
+// bool trigger = false;
 
-// GPIO Interrupt Function
-// Sends trigger pull signal to the PC
-void IRAM_ATTR ISR() {
-  if(millis() - debounceTimer > delayTime){
-    debounceTimer = millis();
-    trigger = true;
-  }
-}
+// // Debounce Timer
+// unsigned long debounceTimer = 0;
+
+// // Debounce Delay Time
+// unsigned int delayTime = 150;
+
+// // GPIO Interrupt Function
+// // Sends trigger pull signal to the PC
+// void IRAM_ATTR ISR() {
+//   if(millis() - debounceTimer > delayTime){
+//     debounceTimer = millis();
+//     trigger = true;
+//   }
+// }
 
 
 void setup() {
@@ -25,8 +32,11 @@ void setup() {
   Serial.setTimeout(1);
 
   // Setup Trigger Interrupt
-  pinMode(18, INPUT_PULLDOWN);
-  attachInterrupt(18, ISR, RISING);
+  // pinMode(18, INPUT_PULLDOWN);
+  // attachInterrupt(18, ISR, RISING);
+
+  trigger.attach(TRIGGER_PIN, INPUT_PULLUP);
+  trigger.interval(25);
 }
 
 void loop() {
@@ -36,13 +46,21 @@ void loop() {
     fire();
   }
 
-  if(trigger){
+  // Update Debounced Button Object
+  trigger.update();
+
+  if(trigger.fell()){
     // Send trigger event to the PC
     Serial.print("Trigger");
-
-    // Reset Trigger
-    trigger = false;
   }
+
+  // if(trigger){
+  //   // Send trigger event to the PC
+  //   Serial.print("Trigger");
+
+  //   // Reset Trigger
+  //   trigger = false;
+  // }
 }
 
 // Computer Vision Detected a Bullet Firing, Fire the Bullet
