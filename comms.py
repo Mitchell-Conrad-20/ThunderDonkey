@@ -2,7 +2,7 @@ import serial
 import time
 
 # Init UART on COM Port 3
-arduino = serial.Serial(port='COM3',  baudrate=115200, timeout=.1)
+arduino = serial.Serial(port='COM4',  baudrate=115200, timeout=.1)
 
 #timer = 0
 
